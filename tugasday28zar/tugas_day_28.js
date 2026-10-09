@@ -42,7 +42,7 @@ console.log(!true); // false
 // penjelasan: 10 > 5 adalah true, tetapi 3 > 8 adalah false. Karena menggunakan operator AND (&&), hasilnya adalah false.
 console.log(10 > 5 && 3 > 8); // false
 
-//langkah 2:perbai 4 kesalahan
+//langkah 2:perbai 4 kesalahaaan
 
 //javascript
 const hargaKopi = 18000;
