@@ -250,6 +250,282 @@ Status: Lunas
 
 //Tips: biasakan pakai === agar aman dari type coercion dan terhindar dari salah tulis = vs ==.
 
+//===langkah 3: bikin kasir sendiri====================================================================================================================
+
+// =====================================================
+// PROGRAM KASIR — Langkah 3
+// =====================================================
+
+// Data awal pelanggan
+const kasirNamaPelanggan = "Rina";
+let kasirTotalBelanja    = 90000;
+let kasirHari            = "sabtu";
+let kasirJenisMember     = "silver";
+let kasirKodeVoucher     = "SENJA10";
+let kasirUangBayar       = 100000;
+
+//// ===Skenario 1===
+// nama = "Rina", belanja = 90000, hari = "sabtu",
+// member = "silver", voucher = "SENJA10", uang = 100000
+//
+// Perhitungan:
+//   Diskon 10%   = 9000
+//   Member silver = 2000
+//   Promo sabtu   = 5000
+//   Voucher       = 2000
+//   Total akhir   = 90000 - 9000 - 2000 - 5000 - 2000 = 72000
+//   Uang 100000 > 72000 → Lunas (kembalian 28000)
+//
+// Hasil:
+// Pelanggan: Rina
+// Hari: sabtu
+// Voucher dipakai: SENJA10
+// Total akhir: Rp72000
+// Status: Lunas, kembalian: Rp28000
+
+//===HASIL ASLI SKENARIO 1===
+//===== STRUK KASIR =====
+//Pelanggan: Rina
+//Hari: sabtu
+//Total belanja: Rp90000
+//Diskon: Rp9000
+//Potongan member (silver): Rp2000
+//Promo hari: Rp5000
+//Voucher dipakai: SENJA10
+//Potongan voucher: Rp2000
+//-----------------------
+//Total akhir: Rp72000
+//Uang bayar: Rp100000
+//Status: Lunas, kembalian: Rp28000
+//=======================
+
+//===SKENARIO 2===
+// Skenario 2:
+// nama = "", belanja = 150000, hari = "jumat",
+// member = "gold", voucher = "SENJA10", uang = 130000
+//
+// Perhitungan:
+//   Diskon 15%   = 22500
+//   Member gold  = 5000
+//   Promo jumat  = 3000
+//   Voucher      = 2000
+//   Total akhir  = 150000 - 22500 - 5000 - 3000 - 2000 = 117500
+//
+// Uang pas: set uang = 117500 agar status "Lunas (uang pas)"
+//
+// Hasil:
+// Nama pelanggan belum diisi
+// Hari: jumat
+// Voucher dipakai: SENJA10
+// Total akhir: Rp117500
+// Status: Lunas (uang pas)
+
+//const kasirNamaPelanggan = "";      // → nama kosong (uji truthy/falsy)
+//let kasirTotalBelanja    = 150000;
+//let kasirHari            = "jumat";
+//let kasirJenisMember     = "gold";
+//let kasirKodeVoucher     = "SENJA10";
+//let kasirUangBayar       = 117500;   // sengaja pas
+
+//===HASIL AKHIR SKENARIO 2===
+//===== STRUK KASIR =====
+//Nama pelanggan belum diisi
+//Hari: jumat
+//Total belanja: Rp150000
+//Diskon: Rp22500
+//Potongan member (gold): Rp5000
+//Promo hari: Rp3000
+//Voucher dipakai: SENJA10
+//Potongan voucher: Rp2000
+//-----------------------
+//Total akhir: Rp117500
+//Uang bayar: Rp117500
+//Status: Lunas (uang pas)
+//=======================
+
+//===SKENARIO 3===
+// nama = "Budi", belanja = 10000, hari = "senin",
+// member = "bronze", voucher = "", uang = 5000
+//
+// Perhitungan:
+//   Diskon 0%     = 0
+//   Member bronze = 0
+//   Promo senin   = 0 (default)
+//   Voucher kosong = 0
+//   Total akhir   = 10000
+//   Uang 5000 < 10000 → Kurang Rp5000
+//
+// Hasil:
+// Pelanggan: Budi
+// Hari: senin
+// Voucher tidak dipakai
+// Total akhir: Rp10000
+// Status: Kurang: Rp5000
+
+//const kasirNamaPelanggan = "Budi";
+//let kasirTotalBelanja    = 10000;
+//let kasirHari            = "senin";
+//let kasirJenisMember     = "bronze";
+//let kasirKodeVoucher     = "";      // → voucher kosong (uji truthy/falsy)
+//let kasirUangBayar       = 5000;
+
+//===HASIL AKHIR SKENARIO 3===
+//===== STRUK KASIR =====
+//Pelanggan: Budi
+//Hari: senin
+//Total belanja: Rp10000
+//Diskon: Rp0
+//Potongan member (bronze): Rp0
+//Promo hari: Rp0
+//Voucher tidak dipakai
+//Potongan voucher: Rp0
+//-----------------------
+//Total akhir: Rp10000
+//Uang bayar: Rp5000
+//Status: Kurang: Rp5000
+//=======================
+//=====================================================================================================
 
 
+// --- 1. Diskon berdasarkan total belanja (if...else if...else) ---
+let kasirDiskon;
+if (kasirTotalBelanja >= 100000) {
+  kasirDiskon = kasirTotalBelanja * 0.15;
+} else if (kasirTotalBelanja >= 50000) {
+  kasirDiskon = kasirTotalBelanja * 0.10;
+} else if (kasirTotalBelanja >= 25000) {
+  kasirDiskon = kasirTotalBelanja * 0.05;
+} else {
+  kasirDiskon = 0;
+}
+
+// --- 2. Potongan member (switch) ---
+let kasirPotonganMember;
+switch (kasirJenisMember) {
+  case "gold":
+    kasirPotonganMember = 5000;
+    break;
+  case "silver":
+    kasirPotonganMember = 2000;
+    break;
+  default:
+    kasirPotonganMember = 0;
+}
+
+// --- 3. Promo hari (switch, sabtu & minggu digabung tanpa break di antaranya) ---
+let kasirPromoHari;
+switch (kasirHari) {
+  case "jumat":
+    kasirPromoHari = 3000;
+    break;
+  case "sabtu":
+  case "minggu":           // sengaja tanpa break — fall-through ke minggu
+    kasirPromoHari = 5000;
+    break;
+  default:
+    kasirPromoHari = 0;
+}
+
+// --- 4. Validasi nama (Truthy/Falsy) ---
+let kasirStatusNama;
+if (kasirNamaPelanggan) {
+  kasirStatusNama = `Pelanggan: ${kasirNamaPelanggan}`;
+} else {
+  kasirStatusNama = "Nama pelanggan belum diisi";
+}
+
+// --- 5. Voucher (Truthy/Falsy) ---
+let kasirPotonganVoucher;
+let kasirStatusVoucher;
+if (kasirKodeVoucher) {
+  kasirPotonganVoucher = 2000;
+  kasirStatusVoucher = `Voucher dipakai: ${kasirKodeVoucher}`;
+} else {
+  kasirPotonganVoucher = 0;
+  kasirStatusVoucher = "Voucher tidak dipakai";
+}
+
+// --- 6. Total akhir ---
+let kasirTotalAkhir =
+  kasirTotalBelanja -
+  kasirDiskon -
+  kasirPotonganMember -
+  kasirPromoHari -
+  kasirPotonganVoucher;
+
+// --- 7. Status pembayaran ---
+let kasirStatusBayar;
+if (kasirUangBayar > kasirTotalAkhir) {
+  kasirStatusBayar = `Lunas, kembalian: Rp${kasirUangBayar - kasirTotalAkhir}`;
+} else if (kasirUangBayar === kasirTotalAkhir) {
+  kasirStatusBayar = "Lunas (uang pas)";
+} else {
+  kasirStatusBayar = `Kurang: Rp${kasirTotalAkhir - kasirUangBayar}`;
+}
+
+// --- 8. Cetak hasil ---
+console.log("===== STRUK KASIR =====");
+console.log(kasirStatusNama);
+console.log(`Hari: ${kasirHari}`);
+console.log(`Total belanja: Rp${kasirTotalBelanja}`);
+console.log(`Diskon: Rp${kasirDiskon}`);
+console.log(`Potongan member (${kasirJenisMember}): Rp${kasirPotonganMember}`);
+console.log(`Promo hari: Rp${kasirPromoHari}`);
+console.log(kasirStatusVoucher);
+console.log(`Potongan voucher: Rp${kasirPotonganVoucher}`);
+console.log("-----------------------");
+console.log(`Total akhir: Rp${kasirTotalAkhir}`);
+console.log(`Uang bayar: Rp${kasirUangBayar}`);
+console.log(`Status: ${kasirStatusBayar}`);
+console.log("=======================");
+
+//===BONUS 5 POINT===
+// =====================================================
+// JAWABAN PERTANYAAN — Langkah 3
+// =====================================================
+
+// 1. Kenapa urutan `else if` pada diskon dimulai dari angka terbesar?
+//    Apa yang terjadi jika dibalik?
+//
+//    Karena `if...else if` dievaluasi BERURUTAN dari atas, dan yang pertama
+//    bernilai true langsung diambil — sisanya dilewati. Kalau dimulai dari
+//    angka terkecil (>= 25000), maka belanja 120000 akan "nyangkut" di
+//    kondisi >= 25000 (dapat 5%) padahal seharusnya dapat 15%.
+//    Jadi urutkan dari kondisi PALING SPESIFIK (>= 100000) ke paling umum.
+
+// 2. Kenapa promo hari lebih cocok memakai `switch`, bukan `if...else if`?
+//
+//    Karena variabelnya membandingkan SATU nilai (hari) dengan banyak
+//    KEMUNGKINAN NILAI TETAP (jumat/sabtu/minggu). `switch` lebih ringkas,
+//    lebih mudah dibaca, dan otomatis mendukung fall-through untuk
+//    case-case yang berbagi aksi yang sama (sabtu + minggu).
+//    `if...else if` lebih cocok untuk rentang/ekspresi logika (>=, <=, &&).
+
+// 3. Pada `switch` promo hari, di mana kamu sengaja tidak menulis `break`?
+//    Kenapa hasilnya tetap benar?
+//
+//    Di antara `case "sabtu":` dan `case "minggu":`. `case "sabtu"` sengaja
+//    dibiarkan tanpa statement dan tanpa break, sehingga eksekusi "jatuh"
+//    ke `case "minggu"` yang berisi `kasirPromoHari = 5000; break;`.
+//    Hasilnya tetap benar karena kedua hari memang sama-sama dapat 5000,
+//    jadi jatuh ke satu blok yang sama tidak menimbulkan efek samping.
+
+// 4. Sebutkan 3 nilai yang membuat `if (namaPelanggan)` bernilai `false`.
+//
+//    - ""          (string kosong)
+//    - null        (nilai null)
+//    - undefined   (variabel belum diisi)
+//    Alternatif lain: 0, -0, NaN, 0n, false.
+
+// 5. Jika `jumlahBeli = -1`, apa hasil `if (jumlahBeli)` dan
+//    `if (jumlahBeli > 0)`? Kenapa berbeda?
+//
+//    if (jumlahBeli)      → TRUE  → masuk blok
+//        karena -1 adalah angka non-nol → truthy.
+//    if (jumlahBeli > 0)  → FALSE → tidak masuk
+//        karena -1 tidak lebih besar dari 0.
+//
+//    Bedanya: `if (jumlahBeli)` hanya menguji "truthy/falsy" (angka non-nol
+//    dianggap benar), sedangkan `jumlahBeli > 0` menguji perbandingan nilai
+//    secara nyata. Untuk validasi "harus positif", pakai `> 0`.
 
