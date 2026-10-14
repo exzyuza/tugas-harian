@@ -432,3 +432,5 @@ Skenario 2: keranjang = ["Roti Bakar", "Nasi Goreng", "Nasi Goreng", "Jus Jeruk"
 
    Kesimpulan: declaration di-hoist, expression/const tidak.
 */
+
+
