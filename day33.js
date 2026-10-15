@@ -1,6 +1,4 @@
-// ============================================
-// TUGAS DAY 33
-// ============================================
+//<<<<<<< LANGKAH 1 : REBAK DULU,BARU CEK >>>>>>>>>>>>
 
 // ============================================
 // POTONGAN A
@@ -180,3 +178,164 @@ for (let huruf of "Kopi") {
 // penghapusan `stok`. Urutan mengikuti urutan penyisipan (insertion order),
 // sehingga "kategori" muncul terakhir dan "stok" sudah hilang.
 */
+
+
+// ============================================
+// LANGKAH 2: PERBAIKI 7 KESALAHAN
+// ============================================
+
+const warung = {
+  nama: "Warung Senja",
+  saldoKas: 100000,
+
+  // FIX 1: Sebelumnya `saldoKas += jumlah` tanpa `this.`
+  //        sehingga mengakses variabel global (ReferenceError).
+  tambahKas(jumlah) {
+    this.saldoKas += jumlah;
+  },
+
+  // FIX 2: Sebelumnya tidak ada `return`, sehingga hasilnya `undefined`.
+  ambilKas(jumlah) {
+    this.saldoKas -= jumlah;
+    return this.saldoKas;
+  },
+};
+
+warung.tambahKas(50000);
+console.log(warung.saldoKas);       // 150000
+console.log(warung.ambilKas(30000)); // 120000
+
+// FIX 3: Key "no-wa" mengandung tanda hubung, jadi TIDAK bisa diakses
+//        dengan dot notation (`kontak.no-wa` dianggap `kontak.no - wa`).
+//        Harus pakai bracket notation.
+const kontak = { "no-wa": "08123" };
+console.log(kontak["no-wa"]);       // 08123
+
+// FIX 4: `akun.kataSandi = undefined` hanya mengubah VALUE menjadi undefined,
+//        tapi KEY-nya masih ada. Untuk menghapus properti, gunakan `delete`.
+const akun = { nama: "Rina", kataSandi: "abc123" };
+delete akun.kataSandi;
+console.log(akun);                  // { nama: 'Rina' }
+
+// FIX 5: `for...in` mencetak INDEX (0, 1, 2), bukan VALUE.
+//        Untuk array, pakai `for...of` supaya langsung dapat value-nya.
+const menu = ["Kopi", "Teh", "Roti"];
+for (let item of menu) {
+  console.log(item);                // Kopi, Teh, Roti
+}
+
+// FIX 6: Object tidak iterable, jadi `for...of` akan error.
+//        Untuk iterasi object, gunakan `for...in`.
+const info = { nama: "Warung Senja", kota: "Yogyakarta" };
+for (let kolom in info) {
+  console.log(kolom + ": " + info[kolom]);
+}
+
+// FIX 7: Typo — `Object.key` seharusnya `Object.keys` (pakai 's').
+console.log(Object.keys(info));     // [ 'nama', 'kota' ]
+
+
+// ============================================
+// OUTPUT AKHIR
+// ============================================
+// 150000
+// 120000
+// 08123
+// { nama: 'Rina' }
+// Kopi
+// Teh
+// Roti
+// nama: Warung Senja
+// kota: Yogyakarta
+// [ 'nama', 'kota' ]
+
+
+// ============================================
+// JAWABAN PERTANYAAN
+// ============================================
+
+/*
+1. Tulis ke-7 kesalahan tadi dalam satu kalimat singkat masing-masing.
+
+   FIX 1: `tambahKas` menulis `saldoKas += jumlah` tanpa `this.`,
+          sehingga mengakses variabel yang tidak ada.
+          → Perbaikan: tulis `this.saldoKas += jumlah`.
+
+   FIX 2: `ambilKas` tidak mengembalikan nilai, sehingga hasilnya
+          `undefined` saat di-console.log.
+          → Perbaikan: tambahkan `return this.saldoKas;`.
+
+   FIX 3: Key `"no-wa"` mengandung tanda hubung, diakses dengan
+          dot notation (`kontak.no-wa`) yang tidak valid.
+          → Perbaikan: gunakan bracket notation `kontak["no-wa"]`.
+
+   FIX 4: `akun.kataSandi = undefined` hanya mengubah nilai, key-nya
+          masih ada sehingga muncul di output.
+          → Perbaikan: gunakan `delete akun.kataSandi;`.
+
+   FIX 5: `for...in` pada array mencetak indeks (0, 1, 2), bukan isi.
+          → Perbaikan: ganti dengan `for...of`.
+
+   FIX 6: `for...of` pada object akan error karena object tidak iterable.
+          → Perbaikan: ganti dengan `for...in`.
+
+   FIX 7: Typo `Object.key` (harusnya `Object.keys`).
+          → Perbaikan: tulis `Object.keys(info)`.
+
+
+2. Mana kesalahan yang menyebabkan error di console, dan mana yang
+   tidak error tetapi hasilnya salah?
+
+   ERROR (runtime error):
+   - FIX 1: `tambahKas` → ReferenceError: saldoKas is not defined
+            (karena `saldoKas` bukan variabel yang dideklarasikan).
+   - FIX 6: `for...of info` → TypeError: info is not iterable
+            (karena plain object tidak punya Symbol.iterator).
+   - FIX 7: `Object.key` → TypeError: Object.key is not a function
+            (karena method yang benar adalah `Object.keys`).
+
+   TIDAK ERROR, tapi hasilnya SALAH:
+   - FIX 2: `ambilKas` mengembalikan `undefined` (tidak error, tapi
+            output salah).
+   - FIX 3: `kontak.no-wa` menghasilkan `NaN` (karena JS membaca
+            `kontak.no - wa`, di mana keduanya `undefined`, dan
+            `undefined - undefined = NaN`) — tidak error, tapi salah.
+   - FIX 4: `akun.kataSandi = undefined` tetap menampilkan key
+            `kataSandi` di output (tidak error, tapi hasil tidak
+            sesuai harapan).
+   - FIX 5: `for...in` pada array mencetak `0`, `1`, `2` bukan
+            `Kopi`, `Teh`, `Roti` — tidak error, tapi salah.
+
+
+3. Kenapa `akun.kataSandi = undefined` tidak sama dengan
+   `delete akun.kataSandi`? Tunjukkan bedanya memakai `in`.
+
+   - `akun.kataSandi = undefined` → HANYA mengubah nilai properti
+     menjadi `undefined`. Key-nya TETAP ADA di object.
+   - `delete akun.kataSandi`      → MENGHAPUS key beserta nilainya
+     dari object sepenuhnya.
+*/
+
+// Demonstrasi perbedaan dengan operator `in`:
+const akunA = { nama: "Rina", kataSandi: "abc123" };
+akunA.kataSandi = undefined;
+
+const akunB = { nama: "Rina", kataSandi: "abc123" };
+delete akunB.kataSandi;
+
+console.log("kataSandi" in akunA);       // true  ← key masih ada
+console.log("kataSandi" in akunB);       // false ← key sudah hilang
+
+console.log(Object.keys(akunA));         // [ 'nama', 'kataSandi' ]
+console.log(Object.keys(akunB));         // [ 'nama' ]
+
+console.log(JSON.stringify(akunA));      // {"nama":"Rina"}
+// ↑ Perhatikan: saat di-JSON.stringify, nilai undefined otomatis
+//   dihilangkan. Tapi di console.log(object), key-nya tetap tampil.
+console.log(JSON.stringify(akunB));      // {"nama":"Rina"}
+
+// Kesimpulan:
+// - `= undefined` → "mengosongkan nilai", key masih ikut di `in`
+//   dan `Object.keys`.
+// - `delete`      → "menghapus properti", key tidak lagi ikut di
+//   `in` maupun `Object.keys`.
